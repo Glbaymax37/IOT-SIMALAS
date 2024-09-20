@@ -25,12 +25,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $Password = $_POST['Password']; // Konsisten dengan form HTML
 }
 ?>
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LOGIN IOT Simalas</title>
     <style>
         /* Styles sesuai yang ada */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: url('https://www.polibatam.ac.id/wp-content/uploads/2022/03/Technopreneur-Polibatam-1.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+
         #bar {
             height: 70px;
             background-color: black;
@@ -61,10 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         #content {
-            background-color: #333333;
-            height: 100vh;
+            background-color: rgba(51, 51, 51, 0.8); /* Add transparency for better visibility */
+            height: calc(100vh - 70px); /* Adjust height to account for the navbar */
             color: white;
-            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -140,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <div class="form-field">
             <label for="Password">Password:</label>
-            <input name="Password" value="<?php echo $Password ?>" type="Password" id="Password" required>
+            <input name="Password" value="<?php echo $Password ?>" type="password" id="Password" required>
         </div>
         <div class="form-field">
             <input type="submit" id="login_button" value="LOGIN">

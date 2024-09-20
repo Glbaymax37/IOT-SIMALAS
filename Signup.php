@@ -143,26 +143,26 @@
     <h2>Register</h2>
     <div class="form-field">
         <label for="name">Nama:</label>
-        <input type="text" id="name" name="Nama" required>
+        <input type="text" id="name" name="Nama" placeholder="Masukkan Nama" required>
     </div>
     <div class="form-field">
         <label for="nim">NIM:</label>
-        <input type="text" id="nim" name="NIM" required>
+        <input type="text" id="nim" name="NIM" placeholder="Masukkan NIM" required>
     </div>
 
     <div class="form-field">
         <label for="PBL">PBL:</label>
-        <input type="text" id="PBL" name="PBL" required>
+        <input type="text" id="PBL" name="PBL" placeholder="PBL"required>
     </div>
 
     <div class="form-field">
         <label for="password">Create Password:</label>
-        <input type="password" id="password" name="Password" required>
+        <input type="password" id="password" name="Password" placeholder="Password" required>
     </div>
 
     <div class="form-field">
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+        <input type="email" id="email" name="email" placeholder="Email"required>
     </div>
 
     <div class="form-field">

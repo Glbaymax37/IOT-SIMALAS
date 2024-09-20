@@ -10,10 +10,9 @@ class Login
         $NIM = addslashes($data['NIM']); 
         $Password = addslashes($data['Password']);
 
-        // Query SQL
         $query = "SELECT * FROM user WHERE NIM = '$NIM' LIMIT 1";
 
-        // Inisiasi database dan baca hasil query
+       
         $DB = new Database();
         $result = $DB->read($query);
        
@@ -22,7 +21,10 @@ class Login
             $row = $result[0];
 
             if (password_verify($Password, $row['Password'])) {
-                $_SESSION['userid'] = $row['userid'];
+                $_SESSION['simalas_userid'] = $row['userid'];
+                $_SESSION['simalas_nama'] = $row['Nama'];
+                $_SESSION['simalas_NIM'] = $row['NIM'];
+                $_SESSION['simalas_PBL'] = $row['PBL'];
             } else {
                 $this->error = "Wrong password<br>";
             }

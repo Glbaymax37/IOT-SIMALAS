@@ -1,21 +1,19 @@
-<?
-
-include("classes/connect.php");
-
+<?php
+session_start(); 
+$userid = $_SESSION["simalas_userid"]; 
+$username = $_SESSION["simalas_nama"];
+$userNIM = $_SESSION["simalas_NIM"];
+$userPBL = $_SESSION["simalas_PBL"]
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Printer Management</title>
     <style>
-        /* Style for the top bar */
-        #bar {
+         #bar {
             height: 65px;
             background-color: #222;
             color: #ffd700;
@@ -29,12 +27,12 @@ include("classes/connect.php");
             position: fixed;
             top: 0;
             width: 100%;
-            z-index: 1000; /* Ensure the top bar is above other content */
+            z-index: 1000; 
             margin-left: -10px;
 
         }
         #logout_button {
-            margin-left: 1000px; /* Adjust this value to move the button */
+            margin-left: 1000px; 
         }
         
         #bar-buttons {
@@ -45,14 +43,14 @@ include("classes/connect.php");
         .button {
             background-color: yellow;
             color: black;
-            border: none;
+            border: none; 
             padding: 10px 20px;
             cursor: pointer;
             margin-left: 10px;
             border-radius: 5px;
         }
 
-        /* Style for the sidebar menu */
+        
         #sidebar {
             width: 220px;
             height: calc(100vh - 65px); /* Adjusted to account for the top bar height */
@@ -131,30 +129,28 @@ include("classes/connect.php");
             background-color: #333; /* Ensure background color consistency */
             color: white;
         }
+        
     </style>
 </head>
-
 <body>
 
     <!-- Top Bar -->
     <div id="bar">
-        <div id="title"><?php echo "3D Printer Management"; ?></div>
-
+        <div id="title">3D Printer Management</div>
         <div id="bar-buttons">
             <button class="button" id="logout_button">Logout</button>
         </div>
 
         <script>
-            // JavaScript to redirect to the login page
             document.getElementById("logout_button").addEventListener("click", function() {
-                window.location.href = "login2.php";
+                window.location.href = "logout.php";
             });
         </script>
     </div>
 
     <!-- Sidebar -->
     <div id="sidebar">
-        <?php 
+        <?php
         // Menu items
         $menu_items = [
             "Dashboard" => "dashboard.php",
@@ -162,9 +158,12 @@ include("classes/connect.php");
             "Settings" => "#"
         ];
 
+        $current_page = basename($_SERVER['PHP_SELF']);
+
         foreach ($menu_items as $item => $link) {
+            $active = ($current_page == $link) ? "active" : "";
             echo '<div class="menu-item">';
-            echo '<button class="button" onclick="location.href=\'' . $link . '\'">' . $item . '</button>';
+            echo '<button class="button ' . $active . '" onclick="location.href=\'' . $link . '\'">' . $item . '</button>';
             echo '</div>';
         }
         ?>
@@ -172,11 +171,15 @@ include("classes/connect.php");
 
     <!-- Main Content -->
     <div id="content">
-         <?php echo "Welcome to IOT Simalas Dashboard"; 
-        
+        <?php
+        // Replace the "Welcome to IOT Simalas Dashboard" message with the user ID
+        echo "Welcome " . htmlspecialchars($username)."<br>";
+        echo "NIM: ". htmlspecialchars($userNIM) ."<br>";
+        echo "PBL: ". htmlspecialchars($userPBL) ."<br>";
+        echo "Today is " . date("Y/m/d") . "<br>";
+        echo "Your User ID is:" . htmlspecialchars($userid);
         ?>
     </div>
 
 </body>
-
 </html>
