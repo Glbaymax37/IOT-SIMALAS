@@ -6,39 +6,62 @@ $username = $_SESSION["simalas_nama"];
 $userNIM = $_SESSION["simalas_NIM"];
 $userPBL = $_SESSION["simalas_PBL"];
 
+$tanggal = "";
+$jamBooking = "";
+$jamSelesai = "";
+
+// Memasukkan file yang diperlukan
 include("classes/connect.php");
 include("classes/login.php");
 include("classes/booking.php");
 
-if(isset($_SESSION["simalas_userid"])&& is_numeric($_SESSION["simalas_userid"]))
-{
+// Membuat objek Booking
+$booking = new Booking(); // Pastikan objek Booking diciptakan di sini
+
+if (isset($_SESSION["simalas_userid"]) && is_numeric($_SESSION["simalas_userid"])) {
     $id = $_SESSION["simalas_userid"];
     $login = new Login();
+    $login->check_login($id);
+    
+    $result = $login->check_login($id);
 
-    $login ->check_login($id);
+    var_dump($result);
 
-    $hasil = $login->check_login($id);
 
-    var_dump($hasil);
-
-    if($hasil){
-
-        echo "oke semua" ;
+    if ($result) {
+        echo "oke semua";
     }
     else{
 
         header("Location: Login2.php");
         die;
     }
-
 }
-
 else{
     header("Location: Login2.php");
     die;
 }
+$error = "";
 
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    // Evaluasi data yang diterima
+    $error = $booking->evaluate($_POST);
 
+    if ($error != "") {
+        echo "<div style='text-align:center;font-size:12px;color:white;background-color:grey;'>";
+        echo "<br>The following errors occurred:<br><br>";
+        echo $error;
+        echo "</div>";
+    } else {
+        // Data valid, buat booking
+        $result = $booking->create_booking($id, $username, $userNIM, $userPBL, $_POST); 
+        header("Location: booking_general.php"); 
+        die;
+    }
+}
+
+// Ambil semua booking setelah form diproses
+$hasil = $booking->getAllBookings(); // Pastikan objek booking sudah diciptakan
 ?>
 
 <!DOCTYPE html>
@@ -153,6 +176,12 @@ else{
             background-color: #333; 
             color: white;
         }
+        form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        
+        }
         
     </style>
 </head>
@@ -196,26 +225,52 @@ else{
     <!-- Main Content -->
     <div id="content">
         <h2>Data Pengguna</h2>
-
         <table>
             <tr>
                 <th>NAMA</th>
                 <th>NIM</th>
                 <th>PBL</th>
+                <th>Tanggal Peminjaman</th>
+                <th>Jam Peminjaman</th>
+                <th>Estimasi Selesai</th>
+
+
             </tr>
 
-            <?php
-            if ($result->num_rows > 0) {
-                // Output setiap baris data
-                while($row = $result->fetch_assoc()) {
-                    echo "<tr><td>". htmlspecialchars($row["NAMA"]) . "</td><td>" . htmlspecialchars($row["NIM"]) . "</td><td>" . htmlspecialchars($row["PBL"]) . "</td></tr>";
+            <?php 
+            if ($hasil) { // Pastikan hasil tidak kosong
+                foreach ($hasil as $row) {
+                    echo "<tr>
+                            <td>" . htmlspecialchars($row["NAMA"]) . "</td>
+                            <td>" . htmlspecialchars($row["NIM"]) . "</td>
+                            <td>" . htmlspecialchars($row["PBL"]) . "</td>
+                            <td>" . htmlspecialchars($row["Tanggal"]) . "</td>
+                            <td>" . htmlspecialchars($row["JamBooking"]) . "</td>
+                            <td>" . htmlspecialchars($row["JamSelesai"]) . "</td>
+                            
+                          </tr>";
                 }
             } else {
-                echo "<tr><td colspan='3'>Tidak ada data</td></tr>";
+                echo "<tr><td colspan='5'>Tidak ada data</td></tr>";
             }
-            $conn->close();
-            ?>
-        </table>
+            ?> 
+          </table>  
+          <form id="signup-form" method="post" action="">
+    <h2>Booking Mesin</h2>
+
+    <label for="tanggal_pinjam">Tanggal Peminjaman:</label>
+    <input type="date" id="tanggal_pinjam" name="tanggal_pinjam" required>
+
+    <label for="waktu_mulai">Waktu Booking:</label>
+    <input type="time" id="waktu_mulai" name="waktu_mulai" required>
+
+    <label for="waktu_selesai">Waktu Selesai:</label>
+    <input type="time" id="waktu_selesai" name="waktu_selesai" required><br><br>
+
+    <input type="submit" value="Submit">
+</form>
+
+
     </div>
 
 </body>
