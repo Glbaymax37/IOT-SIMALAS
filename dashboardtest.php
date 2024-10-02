@@ -1,43 +1,9 @@
 <?php
-session_start();
-
+session_start(); 
 $userid = $_SESSION["simalas_userid"]; 
 $username = $_SESSION["simalas_nama"];
 $userNIM = $_SESSION["simalas_NIM"];
 $userPBL = $_SESSION["simalas_PBL"];
-
-include("classes/connect.php");
-include("classes/login.php");
-
-if(isset($_SESSION["simalas_userid"])&& is_numeric($_SESSION["simalas_userid"]))
-{
-    $id = $_SESSION["simalas_userid"];
-    $login = new Login();
-
-    $login ->check_login($id);
-
-    $result = $login->check_login($id);
-
-    var_dump($result);
-
-    if($result){
-
-        echo "oke semua" ;
-    }
-    else{
-
-        header("Location: Login2.php");
-        die;
-    }
-
-}
-
-else{
-    header("Location: Login2.php");
-    die;
-}
-
-
 ?>
 
 <!DOCTYPE html>
@@ -46,7 +12,9 @@ else{
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Printer Management</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+         /* Styles as you defined them earlier */
          #bar {
             height: 65px;
             background-color: #222;
@@ -63,7 +31,6 @@ else{
             width: 100%;
             z-index: 1000; 
             margin-left: -10px;
-
         }
         #logout_button {
             margin-left: 1000px; 
@@ -84,10 +51,9 @@ else{
             border-radius: 5px;
         }
 
-        
         #sidebar {
             width: 220px;
-            height: calc(100vh - 65px); /* Adjusted to account for the top bar height */
+            height: calc(100vh - 65px); 
             background-color: #2c2c2c;
             padding: 20px;
             position: fixed;
@@ -95,7 +61,7 @@ else{
             left: 0;
             color: #ffd700;
             box-shadow: 4px 0 8px rgba(0, 0, 0, 0.2);
-            overflow-y: auto; /* Ensure sidebar scrolls if content overflows */
+            overflow-y: auto; 
         }
 
         #sidebar .menu-item {
@@ -122,25 +88,43 @@ else{
 
         /* Style for the main content */
         #content {
-            margin-left: 240px; /* Adjust to make space for the sidebar */
+            margin-left: 240px; 
             padding: 40px;
             margin-top: 65px;
             background-color: #333;
             color: white;
             min-height: calc(100vh - 65px);
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
+            align-items: center;
             font-size: 40px;
         }
+
         h1, h2 {
             color: #ffd700;
+        }
+
+        /* Styles for the chart */
+        .chart-container {
+            width: 100%; /* Full width for the chart */
+            max-width: 600px; /* Maximum width */
+            margin: 20px 0; /* Margin around the chart */
+            position: relative;
+            border: 1px solid #ffd700; /* Border to look like table */
+            border-radius: 5px; /* Rounded corners */
+            overflow: hidden; /* Hide overflow */
+            background: white;
+        }
+
+        canvas {
+            width: 100% !important; /* Full width */
+            height: 300px; /* Adjust height as needed */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
         table, th, td {
@@ -160,7 +144,7 @@ else{
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background-color: #333; /* Ensure background color consistency */
+            background-color: #333; 
             color: white;
         }
         
@@ -188,7 +172,7 @@ else{
         // Menu items
         $menu_items = [
             "Dashboard" => "dashboard.php",
-            "Booking" => "booking_general.php",
+            "Booking" => "booking.php",
             "Settings" => "#"
         ];
 
@@ -205,23 +189,58 @@ else{
 
     <!-- Main Content -->
     <div id="content">
-        <h2>Welcome, <?php echo htmlspecialchars($username); ?></h2>
-        <p>Today is <?php echo date("Y/m/d"); ?></p>
+        <?php
+        echo "Welcome " . htmlspecialchars($username)."<br>";
+        echo "NIM: ". htmlspecialchars($userNIM) ."<br>";
+        echo "PBL: ". htmlspecialchars($userPBL) ."<br>";
+        echo "Today is " . date("Y/m/d") . "<br>";
+        echo "Your User ID is: " . htmlspecialchars($userid);
+        ?>
 
-        <table>
-            <tr>
-                <th>User ID</th>
-                <th>NIM</th>
-                <th>PBL</th>
-            </tr>
-            <tr>
-                <td><?php echo htmlspecialchars($userid); ?></td>
-                <td><?php echo htmlspecialchars($userNIM); ?></td>
-                <td><?php echo htmlspecialchars($userPBL); ?></td>
-            </tr>
-        </table>
-    
-    </div>
+        <!-- Chart Container -->
+        <div class="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+
+        <script>
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Merah', 'Biru', 'Kuning', 'Hijau', 'Ungu', 'Jingga'],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: [12, 19, 3, 5, 2, 3], // Ganti dengan data sesuai kebutuhan
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+
+            </div>
 
 </body>
 </html>

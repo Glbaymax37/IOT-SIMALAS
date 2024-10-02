@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript DOM Assignment</title>
+</head>
+<body>
+    <h1>JavaScript Practice: Functions, Events, and DOM</h1>
+
+    <p id="message">Welcome! Please enter something in the input box:</p>
+
+    <input type="text" id="userInput" placeholder="Enter text here">
+    
+    <!-- Two buttons for different actions -->
+    <button id="changeMessageButton">Change Message</button>
+    <button id="displayInDivButton">Display in Div</button>
+
+    <div id="outputDiv">This is the output div. Your input will be displayed here.</div>
+
+    <script>
+        
+
+        function getElement(id) {
+            return document.getElementById(id);
+        }
+
+        function changeMessage() {
+            const hasilmessage = getElement('message');
+            const Input1 = getElement('userInput').value;
+         
+            if(userInput){
+                hasilmessage.textContent = "You Entered : " + Input1;
+            }
+            else{
+                hasilmessage.textContent = "You input Nothing";
+            }
+         
+        }
+
+        function displayInDiv() {
+            const hasilDiv = getElement('outputDiv');
+            const Input2 = getElement('userInput').value;
+
+            if(userInput){
+                hasilDiv.textContent = "Display In Div : " + Input2;
+            }
+            else{
+                hasilDiv.textContent = "You input Nothing";
+            }
+        }
+
+        document.getElementById('changeMessageButton').addEventListener('click', changeMessage);
+        document.getElementById('displayInDivButton').addEventListener('click', displayInDiv);
+    </script>
+
+</body>
+</html>

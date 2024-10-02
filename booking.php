@@ -131,12 +131,6 @@
             <button class="button" id="logout_button">Logout</button>
         </div>
 
-        <script>
-            // JavaScript to redirect to the login page
-            document.getElementById("logout_button").addEventListener("click", function() {
-                window.location.href = "login2.php";
-            });
-        </script>
     </div>
 
     <!-- Sidebar -->

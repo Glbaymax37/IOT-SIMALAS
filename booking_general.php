@@ -8,6 +8,7 @@ $userPBL = $_SESSION["simalas_PBL"];
 
 include("classes/connect.php");
 include("classes/login.php");
+include("classes/booking.php");
 
 if(isset($_SESSION["simalas_userid"])&& is_numeric($_SESSION["simalas_userid"]))
 {
@@ -16,11 +17,11 @@ if(isset($_SESSION["simalas_userid"])&& is_numeric($_SESSION["simalas_userid"]))
 
     $login ->check_login($id);
 
-    $result = $login->check_login($id);
+    $hasil = $login->check_login($id);
 
-    var_dump($result);
+    var_dump($hasil);
 
-    if($result){
+    if($hasil){
 
         echo "oke semua" ;
     }
@@ -47,7 +48,7 @@ else{
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Printer Management</title>
     <style>
-         #bar {
+        #bar {
             height: 65px;
             background-color: #222;
             color: #ffd700;
@@ -63,7 +64,6 @@ else{
             width: 100%;
             z-index: 1000; 
             margin-left: -10px;
-
         }
         #logout_button {
             margin-left: 1000px; 
@@ -84,10 +84,9 @@ else{
             border-radius: 5px;
         }
 
-        
         #sidebar {
             width: 220px;
-            height: calc(100vh - 65px); /* Adjusted to account for the top bar height */
+            height: calc(100vh - 65px);
             background-color: #2c2c2c;
             padding: 20px;
             position: fixed;
@@ -95,7 +94,7 @@ else{
             left: 0;
             color: #ffd700;
             box-shadow: 4px 0 8px rgba(0, 0, 0, 0.2);
-            overflow-y: auto; /* Ensure sidebar scrolls if content overflows */
+            overflow-y: auto; 
         }
 
         #sidebar .menu-item {
@@ -122,25 +121,21 @@ else{
 
         /* Style for the main content */
         #content {
-            margin-left: 240px; /* Adjust to make space for the sidebar */
+            margin-left: 240px; 
             padding: 40px;
             margin-top: 65px;
             background-color: #333;
             color: white;
             min-height: calc(100vh - 65px);
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
-            font-size: 40px;
+            align-items: center; /* Center the items vertically */
         }
-        h1, h2 {
-            color: #ffd700;
-        }
-
+        
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px; 
         }
 
         table, th, td {
@@ -152,15 +147,10 @@ else{
             text-align: center;
         }
 
-        .navigation {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background-color: #333; /* Ensure background color consistency */
+            background-color: #333; 
             color: white;
         }
         
@@ -205,22 +195,27 @@ else{
 
     <!-- Main Content -->
     <div id="content">
-        <h2>Welcome, <?php echo htmlspecialchars($username); ?></h2>
-        <p>Today is <?php echo date("Y/m/d"); ?></p>
+        <h2>Data Pengguna</h2>
 
         <table>
             <tr>
-                <th>User ID</th>
+                <th>NAMA</th>
                 <th>NIM</th>
                 <th>PBL</th>
             </tr>
-            <tr>
-                <td><?php echo htmlspecialchars($userid); ?></td>
-                <td><?php echo htmlspecialchars($userNIM); ?></td>
-                <td><?php echo htmlspecialchars($userPBL); ?></td>
-            </tr>
+
+            <?php
+            if ($result->num_rows > 0) {
+                // Output setiap baris data
+                while($row = $result->fetch_assoc()) {
+                    echo "<tr><td>". htmlspecialchars($row["NAMA"]) . "</td><td>" . htmlspecialchars($row["NIM"]) . "</td><td>" . htmlspecialchars($row["PBL"]) . "</td></tr>";
+                }
+            } else {
+                echo "<tr><td colspan='3'>Tidak ada data</td></tr>";
+            }
+            $conn->close();
+            ?>
         </table>
-    
     </div>
 
 </body>

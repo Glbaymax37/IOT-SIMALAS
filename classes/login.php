@@ -36,4 +36,25 @@ class Login
 
         return $this->error;
     }
+    
+    public function check_login($id){
+
+        $query =  "SELECT * FROM user WHERE userid = '$id' LIMIT 1";
+       
+        
+  
+        $DB = new Database();
+        $result = $DB->read($query);
+
+        if ($result) {
+            
+            return true;
+        
+        }
+        else {
+            return false;
+        }
+  
+    }
+
 }

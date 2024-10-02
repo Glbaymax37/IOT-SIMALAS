@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tip Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .calculator {
+            display: inline-block;
+            text-align: left;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+            background-color: rgb(202, 197, 197);
+        }
+
+        label, input, select, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #89a045;
+        }
+
+        p {
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tip Calculator</h1>
+    <div class="calculator">
+        <label for="billAmount">Tagihan (Rp):</label>
+        <input type="number" id="billAmount" placeholder="Enter bill amount" />
+
+        <label for="persentase">Persentase Pajak:</label>
+        <select id="persentase">
+            <option value="0.10">10%</option>
+            <option value="0.15">15%</option>
+            <option value="0.20">20%</option>
+            <option value="0.25">25%</option>
+        </select>
+
+        <button id="calculateButton">Calculate</button>
+
+        <p id="totalCost">Tagihan Total: 0.00</p>
+    </div>
+
+    <script>
+        document.getElementById('calculateButton').addEventListener('click', function() {
+            const billAmount = parseFloat(document.getElementById('billAmount').value);
+            const tipPercentage = parseFloat(document.getElementById('persentase').value);
+
+            if (isNaN(billAmount) || billAmount <= 0) {
+                alert('Please enter a valid bill amount');
+                return;
+            }
+
+            const tipAmount = billAmount * tipPercentage;
+            const totalCost = billAmount + tipAmount;
+
+            document.getElementById('totalCost').textContent = `Tagihan Total: Rp ${totalCost.toFixed(1)}`;
+        });
+    </script>
+</body>
+</html>
+

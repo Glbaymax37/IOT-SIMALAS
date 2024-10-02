@@ -1,43 +1,9 @@
 <?php
-session_start();
-
+session_start(); 
 $userid = $_SESSION["simalas_userid"]; 
 $username = $_SESSION["simalas_nama"];
 $userNIM = $_SESSION["simalas_NIM"];
 $userPBL = $_SESSION["simalas_PBL"];
-
-include("classes/connect.php");
-include("classes/login.php");
-
-if(isset($_SESSION["simalas_userid"])&& is_numeric($_SESSION["simalas_userid"]))
-{
-    $id = $_SESSION["simalas_userid"];
-    $login = new Login();
-
-    $login ->check_login($id);
-
-    $result = $login->check_login($id);
-
-    var_dump($result);
-
-    if($result){
-
-        echo "oke semua" ;
-    }
-    else{
-
-        header("Location: Login2.php");
-        die;
-    }
-
-}
-
-else{
-    header("Location: Login2.php");
-    die;
-}
-
-
 ?>
 
 <!DOCTYPE html>
@@ -181,14 +147,13 @@ else{
             });
         </script>
     </div>
-
-    <!-- Sidebar -->
-    <div id="sidebar">
+   <!-- Sidebar -->
+   <div id="sidebar">
         <?php
         // Menu items
         $menu_items = [
             "Dashboard" => "dashboard.php",
-            "Booking" => "booking_general.php",
+            "Booking" => "booking.php",
             "Settings" => "#"
         ];
 
@@ -220,7 +185,6 @@ else{
                 <td><?php echo htmlspecialchars($userPBL); ?></td>
             </tr>
         </table>
-    
     </div>
 
 </body>
