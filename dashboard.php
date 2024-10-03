@@ -8,6 +8,7 @@ $userPBL = $_SESSION["simalas_PBL"];
 
 include("classes/connect.php");
 include("classes/login.php");
+include("classes/createbooking.php");
 
 if(isset($_SESSION["simalas_userid"])&& is_numeric($_SESSION["simalas_userid"]))
 {
@@ -17,6 +18,9 @@ if(isset($_SESSION["simalas_userid"])&& is_numeric($_SESSION["simalas_userid"]))
     $login ->check_login($id);
 
     $result = $login->check_login($id);
+    
+    $booking = new Booking(); 
+    $bookings = $booking->bookingByuser();
 
     var_dump($result);
 
@@ -36,6 +40,9 @@ else{
     header("Location: Login2.php");
     die;
 }
+
+
+
 
 
 ?>
@@ -208,18 +215,47 @@ else{
         <h2>Welcome, <?php echo htmlspecialchars($username); ?></h2>
         <p>Today is <?php echo date("Y/m/d"); ?></p>
 
-        <table>
+        <!-- <table>
             <tr>
                 <th>User ID</th>
                 <th>NIM</th>
                 <th>PBL</th>
             </tr>
             <tr>
-                <td><?php echo htmlspecialchars($userid); ?></td>
-                <td><?php echo htmlspecialchars($userNIM); ?></td>
-                <td><?php echo htmlspecialchars($userPBL); ?></td>
+                <td><?//php echo htmlspecialchars($userid); ?></td>
+                <td><?//php echo htmlspecialchars($userNIM); ?></td>
+                <td><?//php echo htmlspecialchars($userPBL); ?></td>
             </tr>
-        </table>
+        </table> -->
+
+        <?php
+if ($bookings) {
+    echo "<table border='1' cellspacing='0' cellpadding='10'>";
+    echo "<tr>
+            <th>Nama</th>
+            <th>NIM</th>
+            <th>PBL</th>
+            <th>Tanggal</th>
+            <th>Waktu Mulai</th>
+            <th>Waktu Selesai</th>
+          </tr>";
+    
+    foreach ($bookings as $row) {
+        echo "<tr>";
+        echo "<td>" . $row['NAMA'] . "</td>";
+        echo "<td>" . $row['NIM'] . "</td>";
+        echo "<td>" . $row['PBL'] . "</td>";
+        echo "<td>" . $row['Tanggal'] . "</td>";
+        echo "<td>" . $row['JamBooking'] . "</td>";
+        echo "<td>" . $row['JamSelesai'] . "</td>";
+        echo "</tr>";
+    }
+
+            echo "</table>";
+        } else {
+            echo "Tidak ada data booking.";
+        }
+    ?>
     
     </div>
 

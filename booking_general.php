@@ -6,17 +6,17 @@ $username = $_SESSION["simalas_nama"];
 $userNIM = $_SESSION["simalas_NIM"];
 $userPBL = $_SESSION["simalas_PBL"];
 
+
 $tanggal = "";
 $jamBooking = "";
 $jamSelesai = "";
 
-// Memasukkan file yang diperlukan
 include("classes/connect.php");
 include("classes/login.php");
-include("classes/booking.php");
+include("classes/createbooking.php");
 
 // Membuat objek Booking
-$booking = new Booking(); // Pastikan objek Booking diciptakan di sini
+$booking = new Booking(); 
 
 if (isset($_SESSION["simalas_userid"]) && is_numeric($_SESSION["simalas_userid"])) {
     $id = $_SESSION["simalas_userid"];
@@ -60,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
 }
 
-// Ambil semua booking setelah form diproses
-$hasil = $booking->getAllBookings(); // Pastikan objek booking sudah diciptakan
+
+$hasil = $booking->getAllBookings(); 
 ?>
 
 <!DOCTYPE html>
