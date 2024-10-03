@@ -14,7 +14,7 @@
             font-size: 32px;
             font-weight: bold;
             display: flex;
-            justify-content: space-between; /* Align items to the left and right */
+            justify-content: space-between; /* testAlign items to the left and right */
             align-items: center;
             padding: 0 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
