@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+/// update hari ini guna mengetes perubahan konesikasi
+
 $userid = $_SESSION["simalas_userid"]; 
 $username = $_SESSION["simalas_nama"];
 $userNIM = $_SESSION["simalas_NIM"];
