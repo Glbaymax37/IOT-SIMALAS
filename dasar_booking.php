@@ -43,7 +43,7 @@
             border-radius: 5px;
         }
 
-        /* Style for the sidebar menu */
+        /* Style for the sidebar menu teskan ini update */
         #sidebar {
             width: 220px;
             height: calc(100vh - 65px); /* Adjusted to account for the top bar height */
