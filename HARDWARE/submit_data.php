@@ -1,5 +1,5 @@
 <?php
-include 'koneksi.php';
+include 'connect.php';
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

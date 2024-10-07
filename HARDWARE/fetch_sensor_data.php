@@ -1,5 +1,5 @@
 <?php
-include 'koneksi.php';
+include 'connect.php';
 // Mengambil data terbaru dari database
 $sql = "SELECT tegangan, arus, daya, energi, suhu, kelembapan, used FROM sensor_data ORDER BY id DESC LIMIT 1";
 $result = $conn->query($sql);

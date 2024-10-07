@@ -1,5 +1,5 @@
 <?php
-include 'koneksi.php';
+include 'connect.php';
 
 $sql = "SELECT voltage, current, power, temperature, humidity, used_fila FROM sensor_data ORDER BY timestamp DESC LIMIT 1";
 $result = $conn->query($sql);
