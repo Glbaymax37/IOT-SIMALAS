@@ -1,8 +1,13 @@
 <?php
 include 'connect.php';
+class fetch_sensor_data{
 // Mengambil data terbaru dari database
-$sql = "SELECT tegangan, arus, daya, energi, suhu, kelembapan, used FROM sensor_data ORDER BY id DESC LIMIT 1";
-$result = $conn->query($sql);
+public function sensor_data() {
+    $query = "SELECT tegangan, arus, daya, energi, suhu, kelembapan, used FROM sensor_data ORDER BY id DESC LIMIT 1";
+    $DB = new Database();
+    return $DB->read($query); 
+}
+}
 
 // Memeriksa apakah data tersedia
 if ($result->num_rows > 0) {
