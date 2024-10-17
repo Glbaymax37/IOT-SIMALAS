@@ -101,13 +101,19 @@
                 </div>
             </div>
         </div>
-
         <div class="row">
             <!-- Box for Panjang Filament Digunakan -->
             <div class="col-md-4 mx-auto">
                 <div class="sensor-box card-custom">
                     <h3>Filament Digunakan (m)</h3>
                     <p id="used">-</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mx-auto">
+                <div class="sensor-box card-custom">
+                    <h3>Sisa Filament (m)</h3>
+                    <p id="remaining">-</p>
                 </div>
             </div>
         </div>
@@ -145,6 +151,7 @@
                     document.getElementById('suhu').innerText = cells[4].innerText;
                     document.getElementById('kelembapan').innerText = cells[5].innerText;
                     document.getElementById('used').innerText = cells[6].innerText;
+                    document.getElementById('remaining').innerText = cells[7].innerText;
 
                     // Update waktu
                     var currentTime = new Date().toLocaleTimeString();
