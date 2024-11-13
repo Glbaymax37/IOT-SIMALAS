@@ -10,6 +10,7 @@ $useremail = $_SESSION["simalas_email"];
 include("classes/connect.php");
 include("classes/login.php");
 include("classes/createbooking.php");
+include("classes/sensor_data.php");
 
 if(isset($_SESSION["simalas_userid"])&& is_numeric($_SESSION["simalas_userid"]))
 {
@@ -22,6 +23,12 @@ if(isset($_SESSION["simalas_userid"])&& is_numeric($_SESSION["simalas_userid"]))
     
     $booking = new Booking(); 
     $bookings = $booking->bookingByuser();
+
+    
+    $data_monitoring = new ESPData();
+    $data_hasil = $data_monitoring -> getSensorDataBySessionUser();
+
+    
 
     if($result){
        
@@ -44,9 +51,7 @@ else{
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -77,7 +82,7 @@ else{
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <img src="https://glatinone.github.io/barelangmrt.github.io/assets/img/BRAIL.png" alt="Logo" style="width:30px; height:auto; margin-right:10px;">
                 </div>
                 <div class="sidebar-brand-text mx-3">IOT SIMALAS <sup></sup></div>
             </a>
@@ -208,8 +213,22 @@ else{
 
                                 var timeString = hours + ':' + minutes + ':' + seconds;
                                 document.getElementById('timeDisplay').textContent = timeString;
+
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("POST", "fetch_time.php", true);
+                                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                                xhr.onreadystatechange = function () {
+                                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                                        var response = JSON.parse(xhr.responseText);
+                                        console.log(response);
+                                    }
+                                };
+                                xhr.send("client_time=" + timeString);
+
+
                             }
                             setInterval(updateTime, 1000);
+                            setInterval(sendTimeToServer, 1000);
                         </script>
 
                         <div class="topbar-divider d-none d-sm-block"></div>
@@ -243,12 +262,7 @@ else{
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-                    </div>
+                    
 
                      <!-- PROFIL -->
                      <div class="card shadow mb-4">
@@ -317,45 +331,142 @@ else{
                                 echo "Tidak ada data booking.";
                             }
                             ?>
+                   <div class="col-lg-2 mb-4">
+                    <button class="card bg-success text-white shadow" id="actionButton" style="border: none; width: 100%; padding: 15px; text-align: left;" data-toggle="modal" data-target="#activateMachineModal">
+                        Aktifkan Mesin
+                    </button>
+                </div>
+                <!-- Modal untuk memasukkan kata sandi -->
+                <div class="modal fade" id="activateMachineModal" tabindex="-1" role="dialog" aria-labelledby="activateMachineLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="activateMachineLabel">Aktifkan Mesin</h5>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Masukkan sandi Anda untuk mengaktifkan mesin.</p>
+                                <div class="form-group">
+                                    <label for="machinePasswordInput">Sandi</label>
+                                    <input type="password" class="form-control" id="machinePasswordInput" placeholder="Masukkan sandi">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
+                                <button class="btn btn-primary" id="activate_button">Aktifkan Mesin</button>
+                            </div>
+                        </div>
                     </div>
-                        <div class="col-lg-1 mb-4">
-                            <button class="card bg-success text-white shadow" id="actionButton" style="border: none; width: 100%; padding: 15px; text-align: left;" disabled>
-                                Aktifkan Mesin
-                        <div class="text-white-50 small"></div>
-                            </button>
-                            
-                    </div>
+                </div>
+                <script>
+                         document.addEventListener("DOMContentLoaded", function () {
+                            var machine = false; // Status mesin, mulai dari OFF
+                            var transferInterval; // Variable untuk menyimpan interval
 
-                        <script>
-                            document.addEventListener("DOMContentLoaded", function () {
-                                var buttonElement = document.getElementById("actionButton");
+                            // Fungsi untuk memperbarui jam
+                            function updateClock() {
+                                var now = new Date();
+                                var hours = now.getHours();
+                                var minutes = now.getMinutes();
 
-                                function updateClock() {
-                                    var now = new Date();
-                                    var hours = now.getHours();
-                                    var minutes = now.getMinutes();
+                                // Mendapatkan waktu mulai dan selesai dari PHP
+                                var startHour = <?php echo $jamMulai ?>;    
+                                var startMinute = <?php echo $menitMulai ?>;  
+                                var endHour = <?php echo $jamUsai ?>;     
+                                var endMinute = <?php echo $menitSelesai ?>;    
 
-                                    console.log("Current Time:", hours, minutes); // Menampilkan waktu saat ini
-
-                                    var startHour = <?php echo $jamMulai?>;    
-                                    var startMinute =<?php echo $menitMulai?>;  
-                                    var endHour = <?php echo $jamUsai?>;     
-                                    var endMinute = <?php echo $menitSelesai?>;    
-
-                                    // Aktifkan atau nonaktifkan tombol berdasarkan waktu
-                                    if ((hours > startHour || (hours === startHour && minutes >= startMinute)) &&
-                                        (hours < endHour || (hours === endHour && minutes < endMinute))) {
-                                        buttonElement.disabled = false; // Aktif
-                                        var_dump(buttonElement);
-                                    } else {
-                                        buttonElement.disabled = true; 
-                                       
+                                // Aktifkan atau nonaktifkan tombol berdasarkan waktu
+                                var buttonElement = document.getElementById("actionButton"); // Mendapatkan elemen tombol
+                                if ((hours > startHour || (hours === startHour && minutes >= startMinute)) &&
+                                    (hours < endHour || (hours === endHour && minutes < endMinute))) {
+                                    buttonElement.disabled = false; // Aktif
+                                } else {
+                                    // Waktu habis, kirim status OFF
+                                    if (machine) {
+                                        console.log("Waktu habis"); // Tambahkan log
+                                        updateMachineStatus("OFF"); // Kirim status OFF 
+                                        machine = false; // Set status mesin menjadi OFF
                                     }
+                                    buttonElement.disabled = true; // Nonaktifkan tombol
                                 }
-                                setInterval(updateClock, 1000);
-                            });
-                        </script>
+                            }
 
+                            // Fungsi untuk memulai pemindahan data
+                            function startDataTransfer() {
+                                transferInterval = setInterval(function () {
+                                    var xhr = new XMLHttpRequest();
+                                    xhr.open("POST", "move_data.php", true);
+                                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                                    xhr.onreadystatechange = function () {
+                                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                                            try {
+                                                var response = JSON.parse(xhr.responseText);
+                                                if (response.status === "success") {
+                                                    console.log("Data successfully moved.");
+                                                } else {
+                                                    console.error("Data move failed.");
+                                                }
+                                            } catch (e) {
+                                                console.error("Error parsing JSON:", e);
+                                            }
+                                        }
+                                    };
+
+                                    xhr.send(); // Kirim permintaan pemindahan data
+                                }, 5000); // Kirim setiap 5 detik
+                            }
+
+                            function stopDataTransfer() {
+                                clearInterval(transferInterval); // Hentikan interval
+                                console.log("Data transfer stopped.");
+                            }
+
+                            // Fungsi untuk mengirim status ke server
+                            function updateMachineStatus(status) {
+                                console.log("Status yang akan dikirim: " + status); // Tambahkan log
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("POST", "update_ssr_status.php", true);
+                                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                                
+                                xhr.onreadystatechange = function () {
+                                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                                        console.log("Respons dari server:", xhr.responseText); // Tambahkan log untuk respons mentah
+                                        try {
+                                            var response = JSON.parse(xhr.responseText);
+                                            console.log(response); // Tambahkan log untuk melihat respons
+                                            alert(response.message); // Tampilkan pesan dari server
+                                        } catch (e) {
+                                            console.error("Error parsing JSON:", e);
+                                            alert("Terjadi kesalahan saat memproses respons dari server.");
+                                        }
+                                    }
+                                };
+                                
+                                xhr.send("status=" + status); // Kirim status
+                            }
+                            // Menambahkan event listener ke tombol aktivasi mesin
+                            document.getElementById("activate_button").addEventListener("click", function () {
+                                var passwordInput = document.getElementById("machinePasswordInput").value;
+
+                                // Lakukan validasi password di sini jika diperlukan
+                                if (passwordInput) {
+                                    // Jika password valid, kirim status ke server
+                                    updateMachineStatus("ON");
+                                    $('#activateMachineModal').modal('hide'); // Sembunyikan modal
+                                    machine = true; // Set status mesin menjadi ON
+                                } else {
+                                    alert("Silakan masukkan kata sandi yang benar."); // Peringatan jika password tidak dimasukkan
+                                }
+                            });
+
+                            // Memperbarui jam setiap detik
+                            setInterval(updateClock, 1000);
+                        });
+                        </script>
+    
                         <style>
                             #actionButton:disabled {
                                 background-color: gray;
@@ -371,33 +482,39 @@ else{
                     <!-- Content Row -->
                     <div class="row">
 
-                        <!-- Suhu Mesin -->
+                         <!-- Suhu Mesin -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Temperature</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">32&deg;C</div>
+                                                Temperature
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="temperature">
+                                                Tidak ada data suhu
+                                            </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-temperature-low fa-2x text-gray-300" ></i></i>
+                                            <i class="fas fa-temperature-low fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Voltage  -->
+                        <!-- Voltage -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Voltage</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">220&nbsp;V</div>
+                                                Voltage
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="voltage">
+                                                Tidak ada data Tegangan
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-bolt fa-2x text-gray-300"></i>
@@ -406,6 +523,7 @@ else{
                                 </div>
                             </div>
                         </div>
+
 
                         <!-- Time Remaining -->
                         <div class="col-xl-3 col-md-6 mb-4">
@@ -417,15 +535,11 @@ else{
                                             </div>
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col-auto">
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">2&nbsp;h&nbsp;30&nbsp;m </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="time_remaining">Memuat...</div>
 
                                                 </div>
                                                 <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar"
-                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                            aria-valuemax="100"></div>
-                                                    </div>
+                                              
                                                 </div>
                                             </div>
                                         </div>
@@ -445,7 +559,7 @@ else{
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                             Length of Filament Used</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">20&nbsp;cm</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="filament">20&nbsp;cm</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-ruler fa-2x text-gray-300"></i>
@@ -455,7 +569,73 @@ else{
                             </div>
                         </div>
                     </div>
+                    
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                            <script>
+                                function fetchSensorData() {
+                                    $.ajax({
+                                        url: 'fetch_sensor.php', // Pastikan path ini benar
+                                        type: 'GET',
+                                        dataType: 'json',
+                                        success: function(data) {
+                                            console.log(data); // Debugging
 
+                                            // Update elemen suhu
+                                            if (data.Suhu) {
+                                                $('#temperature').html(data.Suhu + '&deg;C');
+                                            } else {
+                                                $('#temperature').html('Tidak ada data suhu');
+                                            }
+
+                                            // Update elemen tegangan
+                                            if (data.Tegangan) {
+                                                $('#voltage').html(data.Tegangan + ' V');
+                                            } else {
+                                                $('#voltage').html('Tidak ada data Tegangan');
+                                            }
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.error('AJAX Error: ' + xhr.status + ' - ' + error);
+                                            alert('Terjadi kesalahan: ' + xhr.status + ' - ' + error);
+                                        }
+                                    });
+                                }
+
+                                function fetchTimeRemaining() {
+                                    $.ajax({
+                                        url: 'fetch_time.php', // URL ke file PHP yang kita buat
+                                        type: 'GET',
+                                        dataType: 'json',
+                                        success: function(data) {
+                                            console.log(data); // Debugging
+
+                                            // Update elemen time remaining
+                                            if (data.status === 'ongoing') {
+                                                $('#time_remaining').html(data.time_remaining); // Menampilkan waktu tersisa
+                                            } else if (data.status === 'completed') {
+                                                $('#time_remaining').html('Booking sudah selesai'); // Jika booking selesai
+                                            } else {
+                                                $('#time_remaining').html('' + data.message); // Jika terjadi kesalahan
+                                            }
+
+                                            // Tampilkan waktu server
+                                            $('#server_time').html('Waktu Server: ' + data.server_time); // Pastikan ada elemen dengan ID server_time
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.error('AJAX Error: ' + xhr.status + ' - ' + error);
+                                            alert('Terjadi kesalahan: ' + xhr.status + ' - ' + error);
+                                        }
+                                    });
+                                }
+
+
+                                $(document).ready(function() {
+                                    fetchSensorData(); // Memanggil fungsi pertama kali saat halaman dimuat
+                                    fetchTimeRemaining(); // Memanggil fungsi pertama kali saat halaman dimuat
+                                    setInterval(fetchSensorData, 1000); // Memperbarui data sensor setiap detik
+                                    setInterval(fetchTimeRemaining, 1000); // Memperbarui waktu setiap detik
+                                });
+                            </script>
                     <!-- Content Row -->
 
                     <div class="row">
@@ -504,10 +684,13 @@ else{
     </div>
     <!-- End of Page Wrapper -->
 
+
+
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
+
 
 <!-- Logout Modal-->
         <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
