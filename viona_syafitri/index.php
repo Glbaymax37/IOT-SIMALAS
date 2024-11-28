@@ -521,9 +521,9 @@ else{
             </div>
             <!-- Cara Penggunaan 3D Printer -->
             <div class="card-body">
-    <div class="chart-area" style="height: 900px;">
+    <div class="chart-area" style="height: 1600px;">
         <!-- Ganti URL dengan file .png lokal -->
-        <img src="img/step.png" alt="Tata cara" style="width: 100%; height: auto;">
+        <img src="img/step.png" alt="Tata cara" style="width: 80%; height: auto;">
     </div>
 </div>
                 </div>
